@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - BD Task Income</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-900 min-h-screen text-xs text-white">
+
+    <!-- LOGIN PANEL -->
+    <div id="adminAuthBox" class="fixed inset-0 flex items-center justify-center p-4 z-50">
+        <div class="bg-slate-800 w-full max-w-xs rounded-2xl p-6 space-y-4 shadow-2xl border border-slate-700">
+            <h2 class="text-center font-bold text-base text-sky-400"><i class="fa-solid fa-lock mr-1"></i> এডমিন কন্ট্রোল প্যানেল</h2>
+            <form onsubmit="handleAdminLogin(event)" class="space-y-3">
+                <input type="text" id="admUser" required placeholder="ইউজারনেম (admin)" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white">
+                <input type="password" id="admPass" required placeholder="পাসওয়ার্ড" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white">
+                <button type="submit" class="w-full bg-sky-600 text-white py-2.5 rounded-xl font-bold">প্রবেশ করুন</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MAIN ADMIN DASHBOARD -->
+    <div id="adminDashboard" class="hidden">
+        <nav class="bg-slate-800 border-b border-slate-700 px-4 py-3 flex justify-between items-center sticky top-0 z-40">
+            <span class="font-bold text-sky-400 text-sm"><i class="fa-solid fa-shield-halved mr-1"></i> Admin Control Center</span>
+            <button onclick="location.reload()" class="bg-rose-600 px-3 py-1 rounded-lg font-bold">লগআউট</button>
+        </nav>
+
+        <div class="p-4 space-y-4 max-w-2xl mx-auto">
+            
+            <!-- SETTINGS: PAYMENT & SUPPORT -->
+            <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-3">
+                <h3 class="font-bold text-sm text-sky-400 border-b border-slate-700 pb-2"><i class="fa-solid fa-gear mr-1"></i> পেমেন্ট নম্বর ও সাপোর্ট লিংক সেটিংস</h3>
+                <form onsubmit="handleSaveSettings(event)" class="space-y-2.5">
+                    <div>
+                        <label class="block text-pink-400 mb-1 font-semibold">বিকাশ নম্বর:</label>
+                        <input type="tel" id="cfgBkash" required class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white font-mono">
+                    </div>
+                    <div>
+                        <label class="block text-orange-400 mb-1 font-semibold">নগদ নম্বর:</label>
+                        <input type="tel" id="cfgNagad" required class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white font-mono">
+                    </div>
+                    <div>
+                        <label class="block text-blue-400 mb-1 font-semibold">টেলিগ্রাম গ্রুপ লিংক:</label>
+                        <input type="url" id="cfgTelegram" placeholder="https://t.me/..." class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white">
+                    </div>
+                    <div>
+                        <label class="block text-emerald-400 mb-1 font-semibold">হোয়াটসঅ্যাপ লিংক:</label>
+                        <input type="url" id="cfgWhatsapp" placeholder="https://wa.me/..." class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white">
+                    </div>
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-xl font-bold">সেটিংস সেভ করুন</button>
+                </form>
+            </div>
+
+            <!-- CREATE TASK -->
+            <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-3">
+                <h3 class="font-bold text-sm text-sky-400 border-b border-slate-700 pb-2">নতুন টাস্ক তৈরি করুন</h3>
+                <form onsubmit="handleCreateTask(event)" class="space-y-2">
+                    <input type="text" id="taskTitle" required placeholder="টাস্ক শিরোনাম" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white">
+                    <input type="number" id="taskReward" required placeholder="পুরস্কার (টাকা)" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white">
+                    <input type="url" id="taskLink" required placeholder="টাস্ক লিংক (https://...)" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white">
+                    <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 py-2.5 rounded-xl font-bold text-white">টাস্ক পাবলিশ করুন</button>
+                </form>
+            </div>
+
+            <!-- ACTIVATION REQUESTS -->
+            <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-3">
+                <h3 class="font-bold text-sm text-sky-400 border-b border-slate-700 pb-2">অ্যাকাউন্ট অ্যাক্টিভেশন রিকোয়েস্ট</h3>
+                <div id="activationList" class="space-y-2"></div>
+            </div>
+
+            <!-- WITHDRAW REQUESTS -->
+            <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-3">
+                <h3 class="font-bold text-sm text-sky-400 border-b border-slate-700 pb-2">উইথড্র রিকোয়েস্টসমূহ</h3>
+                <div id="withdrawList" class="space-y-2"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const APP_KEY = 'BD_TASK_INCOME_SECURE_DB_2026';
+        
+        function getDB() { 
+            const raw = localStorage.getItem(APP_KEY);
+            let db = raw ? JSON.parse(raw) : null;
+            if(!db) {
+                db = { 
+                    settings: { bkashNumber: '01711223344', nagadNumber: '01811223344', telegramLink: 'https://t.me/', whatsappLink: 'https://wa.me/' }, 
+                    users: [], tasks: [], activations: [], withdrawals: [] 
+                };
+                localStorage.setItem(APP_KEY, JSON.stringify(db));
+            }
+            return db;
+        }
+
+        function saveDB(db) { localStorage.setItem(APP_KEY, JSON.stringify(db)); }
+
+        function handleAdminLogin(e) {
+            e.preventDefault();
+            const u = document.getElementById('admUser').value;
+            const p = document.getElementById('admPass').value;
+            
+            if (u === 'admin' && p === 'bdtask#2026#admin') {
+                document.getElementById('adminAuthBox').classList.add('hidden');
+                document.getElementById('adminDashboard').classList.remove('hidden');
+                renderAdminData();
+            } else { alert('ভুল ইউজারনেম বা পাসওয়ার্ড!'); }
+        }
+
+        function renderAdminData() {
+            const db = getDB();
+            
+            // Load Settings
+            document.getElementById('cfgBkash').value = db.settings.bkashNumber || '';
+            document.getElementById('cfgNagad').value = db.settings.nagadNumber || '';
+            document.getElementById('cfgTelegram').value = db.settings.telegramLink || '';
+            document.getElementById('cfgWhatsapp').value = db.settings.whatsappLink || '';
+
+            // Activations
+            document.getElementById('activationList').innerHTML = db.activations.map(a => `
+                <div class="p-3 bg-slate-900 border border-slate-700 rounded-xl flex justify-between items-center">
+                    <div><b>${a.userName}</b> (${a.method})<br><span class="text-sky-400 font-mono">TrxID: ${a.trxId}</span></div>
+                    ${a.status === 'Pending' ? `<button onclick="approveActivation('${a.id}')" class="bg-emerald-600 px-3 py-1 rounded-lg font-bold">অনুমোদন</button>` : `<span class="text-emerald-400 font-bold">${a.status}</span>`}
+                </div>
+            `).join('') || '<p class="text-slate-500 py-2">কোনো অ্যাক্টিভেশন রিকোয়েস্ট নেই</p>';
+
+            // Withdrawals
+            document.getElementById('withdrawList').innerHTML = db.withdrawals.map(w => `
+                <div class="p-3 bg-slate-900 border border-slate-700 rounded-xl flex justify-between items-center">
+                    <div><b>${w.userName}</b> (${w.phone})<br><span class="text-rose-400 font-bold">৳${w.amount}</span></div>
+                    ${w.status === 'Pending' ? `<button onclick="approveWithdraw('${w.id}')" class="bg-emerald-600 px-3 py-1 rounded-lg font-bold">পেমেন্ট সম্পন্ন</button>` : `<span class="text-emerald-400 font-bold">${w.status}</span>`}
+                </div>
+            `).join('') || '<p class="text-slate-500 py-2">কোনো উইথড্র রিকোয়েস্ট নেই</p>';
+        }
+
+        function handleSaveSettings(e) {
+            e.preventDefault();
+            const db = getDB();
+            db.settings.bkashNumber = document.getElementById('cfgBkash').value.trim();
+            db.settings.nagadNumber = document.getElementById('cfgNagad').value.trim();
+            db.settings.telegramLink = document.getElementById('cfgTelegram').value.trim();
+            db.settings.whatsappLink = document.getElementById('cfgWhatsapp').value.trim();
+            saveDB(db);
+            alert('সেটিংস সফলভাবে সেভ হয়েছে! ইউজার পেজে লাইভ নম্বর আপডেট হয়ে গেছে।');
+        }
+
+        function handleCreateTask(e) {
+            e.preventDefault();
+            const db = getDB();
+            db.tasks.push({
+                id: 'task_' + Date.now(),
+                title: document.getElementById('taskTitle').value,
+                reward: parseFloat(document.getElementById('taskReward').value),
+                link: document.getElementById('taskLink').value
+            });
+            saveDB(db); alert('নতুন টাস্ক সফলভাবে পাবলিশ হয়েছে!'); e.target.reset();
+        }
+
+        function approveActivation(id) {
+            const db = getDB();
+            const act = db.activations.find(a => a.id === id);
+            if (act) {
+                act.status = 'Approved';
+                const usr = db.users.find(u => u.id === act.userId);
+                if (usr) usr.status = 'Active';
+                saveDB(db); renderAdminData();
+            }
+        }
+
+        function approveWithdraw(id) {
+            const db = getDB();
+            const wdr = db.withdrawals.find(w => w.id === id);
+            if (wdr) {
+                wdr.status = 'Approved';
+                saveDB(db); renderAdminData();
+            }
+        }
+    </script>
+</body>
+</html>
