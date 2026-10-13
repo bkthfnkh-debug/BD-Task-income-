@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>BD Task Income</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%); color: #0f172a; font-family: system-ui, sans-serif; }
+        .card-ui { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-radius: 16px; box-shadow: 0 10px 25px -5px rgba(14, 165, 233, 0.15); }
+        .promo-banner { background: linear-gradient(135deg, #0c4a6e 0%, #075985 50%, #1e3a8a 100%) !important; color: #ffffff !important; }
+    </style>
+</head>
+<body class="min-h-screen pb-24">
+
+    <!-- HEADER -->
+    <header class="bg-white/80 backdrop-blur-md sticky top-0 z-40 shadow-sm border-b border-sky-100 px-4 py-3">
+        <div class="max-w-md mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <div class="w-9 h-9 bg-gradient-to-tr from-sky-600 to-blue-700 rounded-xl flex items-center justify-center text-white shadow-md">
+                    <i class="fa-solid fa-wallet text-lg"></i>
+                </div>
+                <h1 class="font-bold text-lg bg-gradient-to-r from-sky-900 to-blue-800 bg-clip-text text-transparent">BD Task Income</h1>
+            </div>
+            <div id="navRight" class="flex items-center space-x-2"></div>
+        </div>
+    </header>
+
+    <main class="max-w-md mx-auto px-4 pt-3">
+        <!-- BANNER -->
+        <div class="card-ui promo-banner p-4 relative overflow-hidden mb-4 shadow-xl border border-sky-700/30">
+            <div class="relative z-10 space-y-1.5">
+                <span class="bg-amber-400 text-slate-950 text-[10px] font-black px-2 py-0.5 rounded-full uppercase">ধামাকা অফার</span>
+                <h2 class="text-sm font-black text-white leading-tight">প্রতি রেফারে নিশ্চিত বোনাস! বন্ধুদের ইনভাইট করুন ও আয় করুন!</h2>
+                <p class="text-[11px] text-sky-100">অ্যাকাউন্ট অ্যাক্টিভেশন ফি মাত্র ১৫ টাকা। বন্ধুদের রেফার লিংকে জয়েন করান।</p>
+            </div>
+        </div>
+
+        <!-- AUTH PAGE -->
+        <section id="authPage" class="space-y-4">
+            <div class="card-ui p-1.5 flex shadow-inner">
+                <button id="showLoginBtn" onclick="switchAuthTab('login')" class="flex-1 py-2.5 font-bold text-center rounded-xl bg-sky-900 text-white text-xs">লগইন</button>
+                <button id="showRegisterBtn" onclick="switchAuthTab('register')" class="flex-1 py-2.5 font-bold text-center rounded-xl text-sky-900 text-xs">রেজিস্ট্রেশন</button>
+            </div>
+
+            <!-- LOGIN -->
+            <div id="loginFormContainer" class="card-ui p-6 space-y-4">
+                <h2 class="text-lg font-bold text-sky-950 text-center">অ্যাকাউন্টে লগইন করুন</h2>
+                <form onsubmit="handleUserLogin(event)" class="space-y-3 text-xs">
+                    <input type="tel" id="loginPhone" required placeholder="মোবাইল নম্বর (017XXXXXXXX)" class="w-full p-3 border rounded-xl">
+                    <input type="password" id="loginPassword" required placeholder="পাসওয়ার্ড" class="w-full p-3 border rounded-xl">
+                    <button type="submit" class="w-full bg-sky-900 text-white py-3 rounded-xl font-bold">লগইন করুন</button>
+                </form>
+            </div>
+
+            <!-- REGISTER -->
+            <div id="registerFormContainer" class="card-ui p-6 space-y-4 hidden">
+                <h2 class="text-lg font-bold text-sky-950 text-center">নতুন অ্যাকাউন্ট তৈরি করুন</h2>
+                <form onsubmit="handleUserRegister(event)" class="space-y-3 text-xs">
+                    <input type="text" id="regName" required placeholder="আপনার নাম" class="w-full p-3 border rounded-xl">
+                    <input type="tel" id="regPhone" required placeholder="মোবাইল নম্বর" class="w-full p-3 border rounded-xl">
+                    <input type="password" id="regPassword" required placeholder="পাসওয়ার্ড" class="w-full p-3 border rounded-xl">
+                    <input type="text" id="regRefCode" placeholder="রেফারেল কোড (অটো বসবে)" class="w-full p-3 border rounded-xl bg-slate-100 font-bold text-sky-900">
+                    <button type="submit" class="w-full bg-orange-500 text-white py-3 rounded-xl font-bold">নিবন্ধন করুন (১৫ টাকা)</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- DASHBOARD -->
+        <section id="dashboardPage" class="space-y-4 hidden text-xs">
+            <div id="activationBanner" class="card-ui p-4 bg-amber-50/90 border border-amber-200">
+                <div class="flex items-center justify-between gap-3">
+                    <div class="space-y-1">
+                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-200 text-amber-900">অ্যাক্টিভেশন বাকি</span>
+                        <h3 class="font-bold text-xs text-amber-950">অ্যাকাউন্ট অ্যাক্টিভ করুন</h3>
+                    </div>
+                    <button onclick="showSection('activationPage')" class="bg-orange-500 text-white px-3.5 py-2 rounded-xl font-bold whitespace-nowrap">অ্যাক্টিভ ৳১৫</button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div class="card-ui p-4">
+                    <span class="text-slate-500 font-medium">বর্তমান ব্যালেন্স</span>
+                    <div class="mt-2 text-2xl font-black text-sky-950" id="userBalanceDisplay">৳0.00</div>
+                </div>
+                <div class="card-ui p-4">
+                    <span class="text-slate-500 font-medium">পেন্ডিং রিওয়ার্ড</span>
+                    <div class="mt-2 text-2xl font-black text-amber-600" id="userPendingDisplay">৳0.00</div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-2 text-center">
+                <button onclick="showSection('taskCenterPage')" class="card-ui p-3 font-bold text-slate-700"><i class="fa-solid fa-list-check text-blue-600 block text-lg mb-1"></i> টাস্ক সেন্টার</button>
+                <button onclick="showSection('referEarnPage')" class="card-ui p-3 font-bold text-slate-700"><i class="fa-solid fa-users text-purple-600 block text-lg mb-1"></i> রেফার করুন</button>
+                <button onclick="showSection('walletPage')" class="card-ui p-3 font-bold text-slate-700"><i class="fa-solid fa-wallet text-emerald-600 block text-lg mb-1"></i> উইথড্র</button>
+            </div>
+
+            <!-- SUPPORT LINKS -->
+            <div class="grid grid-cols-2 gap-3 pt-2">
+                <a id="usrTelegramLink" href="#" target="_blank" class="card-ui p-3 flex items-center justify-center space-x-2 bg-sky-50 border border-sky-200 text-sky-700 font-bold rounded-xl">
+                    <i class="fa-brands fa-telegram text-lg"></i>
+                    <span>টেলিগ্রাম গ্রুপ</span>
+                </a>
+                <a id="usrWhatsappLink" href="#" target="_blank" class="card-ui p-3 flex items-center justify-center space-x-2 bg-emerald-50 border border-emerald-200 text-emerald-700 font-bold rounded-xl">
+                    <i class="fa-brands fa-whatsapp text-lg"></i>
+                    <span>হোয়াটসঅ্যাপ সাপোর্ট</span>
+                </a>
+            </div>
+        </section>
+
+        <!-- ACTIVATION PAGE -->
+        <section id="activationPage" class="card-ui p-4 hidden text-xs space-y-3">
+            <div class="flex items-center space-x-2 border-b pb-2">
+                <button onclick="showSection('dashboardPage')"><i class="fa-solid fa-arrow-left text-base"></i></button>
+                <h2 class="font-bold text-sm">অ্যাকাউন্ট অ্যাক্টিভেশন (১৫ টাকা)</h2>
+            </div>
+            <p class="text-slate-500">নিচের যেকোনো নম্বরে Send Money করে TrxID দিয়ে সাবমিট করুন:</p>
+            
+            <div class="space-y-2">
+                <div class="bg-pink-50 p-3 rounded-xl border border-pink-100 flex justify-between items-center">
+                    <div>
+                        <b class="text-pink-700 block">bKash (Send Money)</b>
+                        <span id="usrBkashNum" class="font-mono font-bold text-sm text-slate-800">লোড হচ্ছে...</span>
+                    </div>
+                    <button onclick="copyElementText('usrBkashNum')" class="bg-pink-600 text-white px-3 py-1.5 rounded-lg font-bold">কপি</button>
+                </div>
+                <div class="bg-orange-50 p-3 rounded-xl border border-orange-100 flex justify-between items-center">
+                    <div>
+                        <b class="text-orange-700 block">Nagad (Send Money)</b>
+                        <span id="usrNagadNum" class="font-mono font-bold text-sm text-slate-800">লোড হচ্ছে...</span>
+                    </div>
+                    <button onclick="copyElementText('usrNagadNum')" class="bg-orange-600 text-white px-3 py-1.5 rounded-lg font-bold">কপি</button>
+                </div>
+            </div>
+
+            <form onsubmit="submitActivationRequest(event)" class="space-y-3 pt-2">
+                <select id="actMethod" class="w-full p-2.5 border rounded-xl bg-white"><option value="bKash">bKash</option><option value="Nagad">Nagad</option></select>
+                <input type="tel" id="actSenderPhone" required placeholder="আপনার সেন্ডার নম্বর" class="w-full p-2.5 border rounded-xl">
+                <input type="text" id="actTrxId" required placeholder="TrxID (উদাহরণ: 9X87A2BC)" class="w-full p-2.5 border rounded-xl uppercase font-mono">
+                <button type="submit" class="w-full bg-emerald-600 text-white py-3 rounded-xl font-bold">রিকোয়েস্ট পাঠান</button>
+            </form>
+        </section>
+
+        <!-- TASK CENTER -->
+        <section id="taskCenterPage" class="card-ui p-4 hidden text-xs space-y-3">
+            <div class="flex justify-between items-center border-b pb-2">
+                <button onclick="showSection('dashboardPage')"><i class="fa-solid fa-arrow-left text-base"></i></button>
+                <h2 class="font-bold text-sm">টাস্ক সেন্টার</h2>
+                <span></span>
+            </div>
+            <div id="taskList" class="space-y-2"></div>
+        </section>
+
+               <!-- REFER PAGE -->
+        <section id="referEarnPage" class="card-ui p-4 hidden text-xs space-y-3">
+            <div class="flex justify-between items-center border-b pb-2">
+                <button onclick="showSection('dashboardPage')"><i class="fa-solid fa-arrow-left text-base"></i></button>
+                <h2 class="font-bold text-sm">রেফার করুন</h2>
+                <span></span>
+            </div>
+            <p class="text-slate-500">আপনার বন্ধুদের সাথে এই লিংকটি শেয়ার করুন। কেউ এই লিংকে জয়েন করলে আপনার রেফার কাউন্ট হবে:</p>
+            <input type="text" id="userRefLinkDisplay" readonly class="w-full p-3 border rounded-xl font-mono bg-slate-50 text-sky-900 font-bold">
+            <button onclick="copyRefLink()" class="w-full bg-sky-900 text-white py-2.5 rounded-xl font-bold"><i class="fa-solid fa-copy mr-1"></i> লিংক কপি করুন</button>
+        </section>
+     
+
+
+        <!-- WALLET PAGE -->
+        <section id="walletPage" class="card-ui p-4 hidden text-xs space-y-3">
+            <div class="flex justify-between items-center border-b pb-2">
+                <button onclick="showSection('dashboardPage')"><i class="fa-solid fa-arrow-left text-base"></i></button>
+                <h2 class="font-bold text-sm">উইথড্র</h2>
+                <span></span>
+            </div>
+            <form onsubmit="handleWithdrawRequest(event)" class="space-y-3">
+                <input type="tel" id="wDrawPhone" required placeholder="ক্যাশআউট মোবাইল নম্বর" class="w-full p-2.5 border rounded-xl">
+                <input type="number" id="wDrawAmount" min="15" required placeholder="টাকার পরিমাণ (সর্বনিম্ন ১৫)" class="w-full p-2.5 border rounded-xl">
+                <button type="submit" class="w-full bg-emerald-600 text-white py-3 rounded-xl font-bold">উইথড্র রিকোয়েস্ট দিন</button>
+            </form>
+        </section>
+    </main>
+
+    <script>
+        const APP_KEY = 'BD_TASK_INCOME_SECURE_DB_2026';
+        
+        function getDB() { 
+            const raw = localStorage.getItem(APP_KEY);
+            let db = raw ? JSON.parse(raw) : null;
+            if(!db) {
+                db = { 
+                    settings: { bkashNumber: '01711223344', nagadNumber: '01811223344', telegramLink: 'https://t.me/', whatsappLink: 'https://wa.me/' }, 
+                    users: [], tasks: [], activations: [], withdrawals: [] 
+                };
+                localStorage.setItem(APP_KEY, JSON.stringify(db));
+            }
+            return db;
+        }
+
+        function saveDB(db) { localStorage.setItem(APP_KEY, JSON.stringify(db)); }
+
+        let currentUser = null;
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const refParam = urlParams.get('ref');
+            if (refParam) {
+                switchAuthTab('register');
+                document.getElementById('regRefCode').value = refParam;
+            } else {
+                const savedUserId = sessionStorage.getItem('active_user_id');
+                if (savedUserId) {
+                    const db = getDB();
+                    currentUser = db.users.find(u => u.id === savedUserId);
+                    if (currentUser) showSection('dashboardPage');
+                }
+            }
+            updateNav();
+        });
+
+        function updateNav() {
+            const nav = document.getElementById('navRight');
+            if (currentUser) {
+                nav.innerHTML = `<span class="font-bold text-xs">${currentUser.name.split(' ')[0]}</span><button onclick="logout()" class="text-rose-600 ml-2 font-bold"><i class="fa-solid fa-right-from-bracket"></i></button>`;
+            } else { nav.innerHTML = ''; }
+        }
+
+        function logout() { sessionStorage.removeItem('active_user_id'); location.reload(); }
+        
+        function switchAuthTab(tab) {
+            document.getElementById('loginFormContainer').classList.toggle('hidden', tab !== 'login');
+            document.getElementById('registerFormContainer').classList.toggle('hidden', tab === 'login');
+        }
+
+        function handleUserLogin(e) {
+            e.preventDefault();
+            const db = getDB();
+            const user = db.users.find(u => u.phone === document.getElementById('loginPhone').value && u.passwordHash === document.getElementById('loginPassword').value);
+            if (user) { currentUser = user; sessionStorage.setItem('active_user_id', user.id); showSection('dashboardPage'); updateNav(); }
+            else alert('ভুল মোবাইল নম্বর বা পাসওয়ার্ড!');
+        }
+
+        function handleUserRegister(e) {
+            e.preventDefault();
+            const db = getDB();
+            const phone = document.getElementById('regPhone').value;
+            if (db.users.some(u => u.phone === phone)) { alert('এই নম্বরে আগেই অ্যাকাউন্ট খোলা হয়েছে!'); return; }
+            const newUser = { id: 'usr_' + Date.now(), name: document.getElementById('regName').value, phone, passwordHash: document.getElementById('regPassword').value, status: 'Pending Activation', balance: 0, pendingBalance: 0, refCode: 'BD' + Math.floor(100000 + Math.random() * 900000) };
+            db.users.push(newUser); saveDB(db); currentUser = newUser; sessionStorage.setItem('active_user_id', newUser.id);
+            showSection('activationPage'); updateNav();
+        }
+
+        function showSection(id) {
+            ['authPage', 'dashboardPage', 'activationPage', 'taskCenterPage', 'referEarnPage', 'walletPage'].forEach(s => document.getElementById(s)?.classList.add('hidden'));
+            document.getElementById(id)?.classList.remove('hidden');
+            
+            const db = getDB();
+            
+            if (id === 'dashboardPage') {
+                document.getElementById('userBalanceDisplay').innerText = `৳${currentUser.balance.toFixed(2)}`;
+                document.getElementById('userPendingDisplay').innerText = `৳${currentUser.pendingBalance.toFixed(2)}`;
+                document.getElementById('activationBanner').classList.toggle('hidden', currentUser.status === 'Active');
+                
+                // Update support links
+                document.getElementById('usrTelegramLink').href = db.settings.telegramLink || '#';
+                document.getElementById('usrWhatsappLink').href = db.settings.whatsappLink || '#';
+            }
+            
+            if (id === 'activationPage') {
+                document.getElementById('usrBkashNum').innerText = db.settings.bkashNumber || '017XXXXXXXX';
+                document.getElementById('usrNagadNum').innerText = db.settings.nagadNumber || '018XXXXXXXX';
+            }
+            
+            if (id === 'referEarnPage') document.getElementById('userRefLinkDisplay').value = `${window.location.origin}${window.location.pathname}?ref=${currentUser.refCode}`;
+            if (id === 'taskCenterPage') renderTasks();
+        }
+
+        function copyElementText(elementId) {
+            const txt = document.getElementById(elementId).innerText;
+            navigator.clipboard.writeText(txt);
+            alert('নম্বরটি কপি হয়েছে: ' + txt);
+        }
+
+        function renderTasks() {
+            const db = getDB();
+            document.getElementById('taskList').innerHTML = db.tasks.map(t => `
+                <div class="p-3 border rounded-xl flex justify-between items-center bg-white">
+                    <div><b>${t.title}</b><br><span class="text-emerald-600 font-bold">৳${t.reward}</span></div>
+                    <a href="${t.link}" target="_blank" class="bg-sky-900 text-white px-3 py-1 rounded-lg font-bold">ভিজিট করুন</a>
+                </div>
+            `).join('') || '<p class="text-slate-400 text-center py-4">কোনো টাস্ক নেই</p>';
+        }
+
+        function copyRefLink() {
+            navigator.clipboard.writeText(document.getElementById('userRefLinkDisplay').value);
+            alert('রেফারেল লিংক কপি হয়েছে!');
+        }
+
+        function submitActivationRequest(e) {
+            e.preventDefault();
+            const db = getDB();
+            db.activations.push({ id: 'act_' + Date.now(), userId: currentUser.id, userName: currentUser.name, method: document.getElementById('actMethod').value, senderPhone: document.getElementById('actSenderPhone').value, trxId: document.getElementById('actTrxId').value, status: 'Pending' });
+            saveDB(db); alert('অ্যাক্টিভেশন রিকোয়েস্ট জমা হয়েছে!'); showSection('dashboardPage');
+        }
+
+        function handleWithdrawRequest(e) {
+            e.preventDefault();
+            const amt = parseFloat(document.getElementById('wDrawAmount').value);
+            if (amt > currentUser.balance) { alert('অপর্যাপ্ত ব্যালেন্স!'); return; }
+            const db = getDB();
+            currentUser.balance -= amt;
+            db.users.find(u => u.id === currentUser.id).balance = currentUser.balance;
+            db.withdrawals.push({ id: 'wdr_' + Date.now(), userName: currentUser.name, phone: document.getElementById('wDrawPhone').value, amount: amt, status: 'Pending' });
+            saveDB(db); alert('উইথড্র রিকোয়েস্ট সফল হয়েছে!'); showSection('dashboardPage');
+        }
+    </script>
